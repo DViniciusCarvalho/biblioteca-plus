@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  qualidade-e-testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -r servico_usuarios/requirements.txt
+          pip install -r servico_emprestimos/requirements.txt
+
+      - name: Análise estática (Ruff)
+        run: ruff check .
+
+      - name: Formatação (Black)
+        # continue-on-error: só avisa, não reprova. Rode "black ." para corrigir.
+        continue-on-error: true
+        run: black --check .
+
+      - name: Testes unitários
+        run: |
+          for servico in servico_usuarios servico_livros servico_emprestimos servico_notificacoes; do
+            echo "=== $servico ==="
+            (cd $servico && python -m pytest --cov=app --cov-report=term -v)
+          done
+
+      - name: Métricas de qualidade
+        run: python testes/coletar_metricas.py
+
+  build-e-integracao:
+    runs-on: ubuntu-latest
+    needs: qualidade-e-testes
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Subir o sistema com Docker Compose
+        run: |
+          cp .env.example .env
+          docker compose up -d --build
+          sleep 25
+
+      - name: Testes de integração
+        run: |
+          pip install pytest requests
+          python -m pytest testes/test_integracao.py testes/test_falhas.py -v
+
+      - name: Mostrar logs se falhar
+        if: failure()
+        run: docker compose logs
+
+      - name: Desligar
+        if: always()
+        run: docker compose down -v

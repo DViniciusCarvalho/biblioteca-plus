@@ -1,0 +1,108 @@
+services:
+  banco:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - dados_banco:/var/lib/postgresql/data
+      - ./banco_de_dados:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  usuarios:
+    build: ./servico_usuarios
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: banco
+    depends_on:
+      banco:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8000"
+
+  livros:
+    build: ./servico_livros
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: banco
+    depends_on:
+      banco:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8002:8000"
+
+  notificacoes:
+    build: ./servico_notificacoes
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: banco
+    depends_on:
+      banco:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8004:8000"
+
+  emprestimos:
+    build: ./servico_emprestimos
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: banco
+      URL_LIVROS: http://livros:8000
+      URL_NOTIFICACOES: http://notificacoes:8000
+    depends_on:
+      banco:
+        condition: service_healthy
+      livros:
+        condition: service_started
+      notificacoes:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8003:8000"
+
+  gateway:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - usuarios
+      - livros
+      - emprestimos
+      - notificacoes
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    volumes:
+      - ./monitoramento/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - dados_grafana:/var/lib/grafana
+      - ./monitoramento/grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  dados_banco:
+  dados_grafana:
