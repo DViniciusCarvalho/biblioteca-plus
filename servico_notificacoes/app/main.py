@@ -1,7 +1,7 @@
 import logging
-
 import psycopg2
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
@@ -15,7 +15,11 @@ logging.basicConfig(
 log = logging.getLogger("notificacoes")
 
 app = FastAPI(title="Biblioteca+ - Serviço de Notificações")
-Instrumentator().instrument(app).expose(app) 
+
+app.add_middleware(
+    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
+)
+Instrumentator().instrument(app).expose(app)  # cria a rota /metrics
 
 
 class NovaNotificacao(BaseModel):
@@ -43,6 +47,7 @@ def criar(dados: NovaNotificacao):
         (dados.usuario_id, dados.tipo, dados.mensagem),
         "um",
     )
+
     log.info("[SIMULAÇÃO DE ENVIO] usuario=%s: %s", dados.usuario_id, dados.mensagem)
     return notificacao
 

@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta, timezone
-
 import jwt
 from fastapi.testclient import TestClient
-
 from app.main import app
 from app.seguranca import ALGORITMO, SEGREDO
 
@@ -52,7 +50,6 @@ def test_livro_inexistente(monkeypatch):
 
 
 def test_reservar_livro_indisponivel(monkeypatch):
-    # 1ª chamada (UPDATE) não altera nada; 2ª chamada (SELECT) mostra que o livro existe
     respostas = iter([None, {"id": 1}])
     monkeypatch.setattr("app.main.executar", lambda *args, **kwargs: next(respostas))
     resposta = client.post("/livros/1/reservar", headers=cabecalho_com_token())

@@ -1,9 +1,9 @@
 import logging
 import os
-
 import psycopg2
 import psycopg2.errors
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel
@@ -18,6 +18,10 @@ logging.basicConfig(
 log = logging.getLogger("emprestimos")
 
 app = FastAPI(title="Biblioteca+ - Serviço de Empréstimos")
+
+app.add_middleware(
+    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
+)
 Instrumentator().instrument(app).expose(app)  # cria a rota /metrics
 
 MAX_EMPRESTIMOS = int(os.getenv("MAX_EMPRESTIMOS", "3"))  # RN03

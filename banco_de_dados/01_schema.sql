@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS emprestimos (
     data_devolucao           TIMESTAMP
 );
 
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_um_emprestimo_ativo_por_livro
     ON emprestimos (livro_id) WHERE status = 'ativo';
 

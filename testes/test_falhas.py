@@ -86,7 +86,7 @@ def test_banco_de_dados_fora_do_ar():
     docker("stop", "banco")
     try:
         resposta = requests.get(f"{BASE}/livros", timeout=20)
-        assert resposta.status_code == 503
+        assert resposta.status_code == 503  # "Banco indisponível"
     finally:
         docker("start", "banco")
         # os serviços reconectam sozinhos (abrem uma conexão nova a cada pedido)

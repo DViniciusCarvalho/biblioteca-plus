@@ -40,6 +40,7 @@ biblioteca-plus/
 ├── banco_de_dados/
 │   ├── 01_schema.sql           # criação das tabelas
 │   └── 02_dados_exemplo.sql    # livros de exemplo
+├── frontend/                   # telas (HTML, CSS e JS puros); veja frontend/LEIA-ME.md
 ├── gateway/nginx.conf
 ├── monitoramento/              # prometheus.yml e datasource do Grafana
 ├── servico_usuarios/           # cada serviço tem a mesma estrutura:
@@ -63,6 +64,7 @@ biblioteca-plus/
 │   ├── Relatorio_Final.docx
 │   ├── Documentacao_de_Seguranca.docx
 │   ├── Casos_de_Teste.docx
+│   ├── Guia_Docker.docx
 │   └── diagramas/              # arquitetura.png, modelo_dados.png (+ fontes .dot)
 └── .github/workflows/ci.yml    # GitHub Actions
 ```

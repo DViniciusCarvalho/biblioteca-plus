@@ -9,7 +9,7 @@ def conectar():
         port=os.getenv("DB_PORT", "5432"),
         dbname=os.getenv("POSTGRES_DB", "biblioteca"),
         user=os.getenv("POSTGRES_USER", "biblioteca_user"),
-        password=os.getenv("POSTGRES_PASSWORD", "12345678"),
+        password=os.getenv("POSTGRES_PASSWORD", ""),
         connect_timeout=5,
         cursor_factory=RealDictCursor,
     )

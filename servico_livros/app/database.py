@@ -9,19 +9,13 @@ def conectar():
         port=os.getenv("DB_PORT", "5432"),
         dbname=os.getenv("POSTGRES_DB", "biblioteca"),
         user=os.getenv("POSTGRES_USER", "biblioteca_user"),
-        password=os.getenv("POSTGRES_PASSWORD", "12345678"),
+        password=os.getenv("POSTGRES_PASSWORD", ""),
         connect_timeout=5,
         cursor_factory=RealDictCursor,
     )
 
 
 def executar(sql, parametros=None, buscar="nenhum"):
-    """Executa um comando SQL.
-
-    buscar="um"     -> devolve uma linha (ou None)
-    buscar="todos"  -> devolve uma lista de linhas
-    buscar="nenhum" -> não devolve nada
-    """
     conexao = conectar()
     try:
         with conexao.cursor() as cursor:

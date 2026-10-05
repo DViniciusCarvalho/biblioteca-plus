@@ -61,7 +61,8 @@ def linhas_de_codigo(pasta):
 
 def problemas_ruff(pasta):
     codigo, saida = rodar(
-        [sys.executable, "-m", "ruff", "check", ".", "--output-format", "concise"], pasta
+        [sys.executable, "-m", "ruff", "check", ".", "--output-format", "concise"],
+        pasta,
     )
     if not ferramenta_instalada(saida):
         return "n/d"
@@ -76,7 +77,9 @@ def formatacao_black(pasta):
 
 
 def complexidade(pasta):
-    codigo, saida = rodar([sys.executable, "-m", "radon", "cc", "-s", "-a", "app"], pasta)
+    codigo, saida = rodar(
+        [sys.executable, "-m", "radon", "cc", "-s", "-a", "app"], pasta
+    )
     if not ferramenta_instalada(saida):
         return "n/d"
     achou = re.search(r"Average complexity: (\w) \(([\d.]+)\)", saida)
@@ -100,7 +103,9 @@ def main():
 
     Path(RAIZ / "metricas").mkdir(exist_ok=True)
     destino = RAIZ / "metricas" / "relatorio_metricas.md"
-    cabecalho = f"# Métricas de qualidade\n\nGerado em {datetime.now():%d/%m/%Y %H:%M}\n\n"
+    cabecalho = (
+        f"# Métricas de qualidade\n\nGerado em {datetime.now():%d/%m/%Y %H:%M}\n\n"
+    )
     legenda = (
         "\n\n- **Cobertura**: % das linhas do código executadas pelos testes (pytest-cov)."
         "\n- **Ruff**: quantidade de problemas apontados pela análise estática (0 é o ideal)."

@@ -1,10 +1,8 @@
-"""Serviço de Usuários: cadastro, login e consulta de dados."""
-
 import logging
-
 import psycopg2
 import psycopg2.errors
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, EmailStr, Field
@@ -23,8 +21,11 @@ logging.basicConfig(
 log = logging.getLogger("usuarios")
 
 app = FastAPI(title="Biblioteca+ - Serviço de Usuários")
-Instrumentator().instrument(app).expose(app)  # cria a rota /metrics
 
+app.add_middleware(
+    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
+)
+Instrumentator().instrument(app).expose(app)  # cria a rota /metrics
 
 class UsuarioCadastro(BaseModel):
     nome: str = Field(min_length=2, max_length=100)
@@ -93,7 +94,6 @@ def buscar_usuario(usuario_id):
     if usuario is None:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return usuario
-
 
 @app.get("/usuarios/me")
 def meus_dados(atual: dict = Depends(usuario_atual)):

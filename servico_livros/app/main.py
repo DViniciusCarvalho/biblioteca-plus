@@ -1,6 +1,7 @@
 import logging
 import psycopg2
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
@@ -14,7 +15,11 @@ logging.basicConfig(
 log = logging.getLogger("livros")
 
 app = FastAPI(title="Biblioteca+ - Serviço de Livros")
-Instrumentator().instrument(app).expose(app)
+
+app.add_middleware(
+    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
+)
+Instrumentator().instrument(app).expose(app)  # cria a rota /metrics
 
 COLUNAS = "id, titulo, autor, ano, disponivel"
 

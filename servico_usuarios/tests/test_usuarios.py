@@ -1,5 +1,4 @@
 from fastapi.testclient import TestClient
-
 from app.main import app
 from app.seguranca import criar_token, gerar_hash_senha, verificar_senha
 

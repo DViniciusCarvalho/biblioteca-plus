@@ -3,7 +3,6 @@ import hmac
 import os
 import secrets
 from datetime import datetime, timedelta, timezone
-
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer

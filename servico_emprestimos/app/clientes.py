@@ -1,5 +1,8 @@
+
+
 import logging
 import os
+
 import requests
 from fastapi import HTTPException
 
@@ -23,6 +26,7 @@ def _chamar_livros(caminho, token):
 
 
 def reservar_livro(livro_id, token):
+    """Pede ao serviço de livros para marcar o livro como indisponível."""
     resposta = _chamar_livros(f"/livros/{livro_id}/reservar", token)
     if resposta.status_code == 404:
         raise HTTPException(status_code=404, detail="Livro não encontrado")
@@ -34,6 +38,7 @@ def reservar_livro(livro_id, token):
 
 
 def liberar_livro(livro_id, token, ignorar_erro=False):
+    """Pede ao serviço de livros para marcar o livro como disponível."""
     try:
         resposta = _chamar_livros(f"/livros/{livro_id}/liberar", token)
         if resposta.status_code != 200:
@@ -46,6 +51,7 @@ def liberar_livro(livro_id, token, ignorar_erro=False):
 
 
 def notificar(usuario_id, tipo, mensagem):
+    """Envia uma notificação. Se falhar, só registra no log (não trava o empréstimo)."""
     try:
         requests.post(
             f"{URL_NOTIFICACOES}/notificacoes",

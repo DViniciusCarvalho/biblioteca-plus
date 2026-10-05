@@ -1,3 +1,9 @@
+"""Teste de integração: percorre o fluxo completo pelo gateway.
+
+Precisa do sistema rodando (docker compose up -d --build).
+Execute na raiz do projeto:  python -m pytest testes -v
+"""
+
 import os
 import uuid
 
@@ -20,7 +26,9 @@ def criar_usuario_e_logar():
 
 def criar_livro(cabecalho):
     dados = {"titulo": "Livro de Teste", "autor": "Autor de Teste", "ano": 2020}
-    resposta = requests.post(f"{BASE}/livros", json=dados, headers=cabecalho, timeout=10)
+    resposta = requests.post(
+        f"{BASE}/livros", json=dados, headers=cabecalho, timeout=10
+    )
     assert resposta.status_code == 201
     return resposta.json()["id"]
 
@@ -51,7 +59,10 @@ def test_fluxo_completo_de_emprestimo():
 
     # empréstimo
     resposta = requests.post(
-        f"{BASE}/emprestimos", json={"livro_id": livro_id}, headers=cabecalho, timeout=10
+        f"{BASE}/emprestimos",
+        json={"livro_id": livro_id},
+        headers=cabecalho,
+        timeout=10,
     )
     assert resposta.status_code == 201
     emprestimo_id = resposta.json()["id"]

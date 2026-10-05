@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biblioteca+</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <h1>Biblioteca<b>+</b></h1>
+    <div id="usuario" hidden><span id="nome"></span><button id="sair" class="link">Sair</button></div>
+  </header>
+
+  <main>
+    <section id="tela-auth" class="caixa estreita">
+      <div class="abas">
+        <button class="aba ativa" data-form="entrar">Entrar</button>
+        <button class="aba" data-form="cadastrar">Criar conta</button>
+      </div>
+      <form id="form-entrar">
+        <label>E-mail <input name="email" type="email" required autocomplete="email"></label>
+        <label>Senha <input name="senha" type="password" required autocomplete="current-password"></label>
+        <button class="principal">Entrar</button>
+      </form>
+      <form id="form-cadastrar" hidden>
+        <label>Nome <input name="nome" required minlength="2" maxlength="100"></label>
+        <label>E-mail <input name="email" type="email" required autocomplete="email"></label>
+        <label>Senha (mínimo 6 caracteres) <input name="senha" type="password" required minlength="6" autocomplete="new-password"></label>
+        <button class="principal">Criar conta</button>
+      </form>
+    </section>
+
+    <section id="tela-app" hidden>
+      <nav class="abas">
+        <button class="aba" data-aba="livros">Livros</button>
+        <button class="aba" data-aba="emprestimos">Meus empréstimos</button>
+        <button class="aba" data-aba="notificacoes">Avisos</button>
+      </nav>
+
+      <div id="painel-livros" class="painel">
+        <div class="barra">
+          <input id="busca" type="search" placeholder="Buscar por título">
+          <label class="check"><input id="so-disp" type="checkbox"> Só disponíveis</label>
+        </div>
+        <details class="caixa">
+          <summary>Cadastrar um livro</summary>
+          <form id="form-livro" class="linha">
+            <label>Título <input name="titulo" required maxlength="200"></label>
+            <label>Autor <input name="autor" required maxlength="150"></label>
+            <label>Ano <input name="ano" type="number" min="0" max="2100"></label>
+            <button class="principal">Salvar</button>
+          </form>
+        </details>
+        <div id="lista-livros" class="lista"></div>
+      </div>
+
+      <div id="painel-emprestimos" class="painel" hidden><div id="lista-emprestimos" class="lista"></div></div>
+      <div id="painel-notificacoes" class="painel" hidden><div id="lista-notificacoes" class="lista"></div></div>
+    </section>
+  </main>
+
+  <div id="aviso" role="status"></div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

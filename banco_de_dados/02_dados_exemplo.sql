@@ -1,4 +1,3 @@
-
 INSERT INTO livros (titulo, autor, ano) VALUES
     ('Dom Casmurro', 'Machado de Assis', 1899),
     ('O Cortiço', 'Aluísio Azevedo', 1890),
